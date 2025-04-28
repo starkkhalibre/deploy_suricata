@@ -1,0 +1,10 @@
+---
+- name: Start suricata service 
+  ansible.builtin.service:
+    name: suricata
+    state: started
+
+- name: Restart suricata service 
+  ansible.builtin.service:
+    name: suricata
+    state: restarted

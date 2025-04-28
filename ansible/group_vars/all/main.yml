@@ -1,0 +1,19 @@
+---
+deploy_suricata_rules_file: https://rules.emergingthreats.net/open/suricata-7.0.3/emerging.rules.tar.gz
+
+# file path
+deploy_suricata_config_file_path: /etc/suricata
+deploy_suricata_rule_path: /var/lib/suricata/rules
+deploy_suricata_path: /var/lib/suricata
+deploy_suricata_log: /var/log/suricata
+
+# suricata configuration
+deploy_suricata_enabled_community_id: true
+
+# network 
+
+# BEGIN ANSIBLE MANAGED BLOCK
+deploy_suricata_network_interface: "wlp4s0"
+deploy_suricata_ip: "192.168.241.71"
+# END ANSIBLE MANAGED BLOCK
+

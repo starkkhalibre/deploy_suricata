@@ -1,0 +1,11 @@
+---
+- name: Gather network facts for suricata configuration 
+  ansible.builtin.import_tasks: gather_network-facts.yml
+
+- name: Install and Setup suricata
+  ansible.builtin.import_tasks: install_suricata.yml
+  notify: Start suricata service 
+
+- name: Suricata custom configuration
+  ansible.builtin.import_tasks: config_suricata.yml
+  notify: Restart suricata service 

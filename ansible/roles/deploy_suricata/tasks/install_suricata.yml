@@ -1,0 +1,23 @@
+---
+- name: Install suricata software properties
+  ansible.builtin.apt:
+    name: software-properties-common
+    state: present
+  tags: suricata_sp
+
+- name: Add suricata ppa repo
+  ansible.builtin.apt_repository:
+    filename: suricata_repo
+    repo: ppa:oisf/suricata-stable
+    state: present
+    update_cache: true
+  tags: suricata_repo
+
+- name: Install suricata on local machine
+  ansible.builtin.apt:
+    name: suricata
+    state: present
+  when: ansible_facts.packages['suricata'] is not defined
+  notify: Start suricata service
+  tags: install_suricata
+

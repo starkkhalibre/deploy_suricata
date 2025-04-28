@@ -1,0 +1,51 @@
+---
+- name: Add custom suricata config file
+  ansible.builtin.template:
+    src: suricata.yaml.j2
+    dest: "{{ deploy_suricata_config_file_path }}/suricata.yaml"
+  notify: Restart suricata service
+  tags: custom-config
+
+- name: Check for enable rule file
+  ansible.builtin.stat:
+    path: "{{ deploy_suricata_config_file_path }}/enable.conf"
+  register: disable_stat
+  tags: enable-rules
+
+- name: Create and populate disable.conf with template
+  ansible.builtin.template:
+    src: enable.conf.j2
+    dest: "{{ deploy_suricata_config_file_path }}/enable.conf"
+    mode: '0644'
+  tags: enable-rules
+
+- name: Check for disable rule file
+  ansible.builtin.stat:
+    path: "{{ deploy_suricata_config_file_path }}/disable.conf"
+  register: disable_stat
+  tags: disable-rules
+
+- name: Create and populate disable.conf with template
+  ansible.builtin.template:
+    src: disable.conf.j2
+    dest: "{{ deploy_suricata_config_file_path }}/disable.conf"
+    mode: '0644'
+  tags: disable-rules
+
+- name: Update suricata
+  ansible.builtin.command: suricata-update
+  tags: update-suricata
+
+- name: Testing Suricata config file
+  ansible.builtin.command: suricata -T -c {{ deploy_suricata_config_file_path }}/suricata.yaml
+  register: test_suri
+  changed_when: false 
+  ignore_errors: true  
+  tags: test-suricata
+
+- name: Result of Suricata config test
+  ansible.builtin.debug:
+    msg: "{{ test_suri.stdout }}"
+  tags: test-suricata
+
+

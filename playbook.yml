@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  become: true
+  become_user: root
+  gather_facts: true
+  roles:
+    - ../roles/deploy_wazuh/ansible-wazuh-agent

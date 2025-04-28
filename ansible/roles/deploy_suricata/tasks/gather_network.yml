@@ -1,0 +1,29 @@
+---
+- name: Display all interfaces name
+  ansible.builtin.debug:
+    var: ansible_facts.interfaces
+
+- name: Get all the network interfaces with IPAddresses
+  ansible.builtin.debug:
+    msg: "interface {{ item }}'s IPAddress is {{ ansible_facts[item]['ipv4']['address'] | default(None) }}"
+  with_items:
+    - "{{ ansible_interfaces }}"
+
+- name: Get the wlp interface and its IP
+  ansible.builtin.set_fact:
+    deploy_suricata_network_interface: "{{ item }}"
+    deploy_suricata_ip: "{{ ansible_facts[item]['ipv4']['address'] }}"
+  when: item is match("wlp.*") and ansible_facts[item]['ipv4']['address'] is defined
+  with_items:
+    - "{{ ansible_interfaces }}"
+  register: wlp_ip_result
+  
+- name: Append wifi interface and IP to defaults/main.yml
+  ansible.builtin.blockinfile:
+    path: "{{ playbook_dir }}/roles/deploy_suricata/ansible-suricata-agent/defaults/main.yml"
+    block: |
+      deploy_suricata_network_interface: "{{ deploy_suricata_network_interface }}"
+      deploy_suricata_ip: "{{ deploy_suricata_ip }}"
+    create: yes
+    mode: '0644'
+  when: deploy_suricata_network_interface is defined and wifi_ip is defined
