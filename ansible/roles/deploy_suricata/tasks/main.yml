@@ -1,6 +1,6 @@
 ---
 - name: Gather network facts for suricata configuration 
-  ansible.builtin.import_tasks: gather_network-facts.yml
+  ansible.builtin.import_tasks: gather_network.yml
 
 - name: Install and Setup suricata
   ansible.builtin.import_tasks: install_suricata.yml
