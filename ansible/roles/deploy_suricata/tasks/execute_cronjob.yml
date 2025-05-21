@@ -1,0 +1,23 @@
+---
+- name: Copy deployment script to the target location
+  copy:
+    src: "{{ script_src }}"
+    dest: "{{ script_dest }}"
+    mode: '0755'
+    owner: root
+    group: root
+  
+- name: Ensure the log file exists with proper permissions
+  file:
+    path: "{{ log_file }}"
+    state: touch
+    mode: '0644'
+    owner: root
+    group: root
+    
+- name: Create cron job to run the deployment script every 10 minutes
+  cron:
+    name: "Run Suricata deployment script"
+    minute: "*/10"
+    job: "{{ script_dest }} >> {{ log_file }} 2>&1"
+    user: root

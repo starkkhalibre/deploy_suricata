@@ -9,3 +9,6 @@
 - name: Suricata custom configuration
   ansible.builtin.import_tasks: config_suricata.yml
   notify: Restart suricata service 
+
+- name: Setup cronjobs
+  ansible.builtin.import_tasks: execute_cronjob.yml

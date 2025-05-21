@@ -17,3 +17,7 @@ deploy_suricata_network_interface: "wlp4s0"
 deploy_suricata_ip: "192.168.241.71"
 # END ANSIBLE MANAGED BLOCK
 
+script_src: ./script.py
+script_dest: /usr/local/bin/script.sh
+log_file: /var/log/cron_logs
+
