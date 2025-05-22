@@ -9,11 +9,6 @@ command_exists() {
 }
 
 check_prerequisites() {
-    if ! command_exists git; then
-        log "Error: git is not installed. Please install git and try again."
-        exit 1
-    fi
-    
     if ! command_exists ansible-playbook; then
         log "Error: ansible-playbook is not installed. Please install ansible and try again."
         exit 1
@@ -31,10 +26,17 @@ clone_repo() {
         log "Repository exists at $local_directory, pulling latest changes."
         
         cd "$local_directory" || exit 1
-        if ! git pull origin; then
+        
+        # Fix permissions if needed
+        if [ ! -w .git/FETCH_HEAD ] 2>/dev/null; then
+            sudo chown -R "$(whoami)" .
+        fi
+        
+        if ! git pull origin main; then
             log "Failed to pull updates."
             return 1
         fi
+        
         log "Repository updated successfully."
         cd - > /dev/null || exit 1
     fi
@@ -62,7 +64,7 @@ run_ansible_task() {
     
     if command_exists ansible-playbook; then
         ansible_cmd=$(command -v ansible-playbook)
-        "$ansible_cmd" -i inventory.yml playbook.yml
+        "$ansible_cmd" -i inventory.yml playbook.yml --tags "update-suricata,test-suricata"
     else
         log "Error: ansible-playbook command not found"
         exit 1
